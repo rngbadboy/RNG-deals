@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>RNG Deals</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06100b;--bg2:#0b1a12;--card:rgba(255,255,255,.05);--cb:rgba(255,255,255,.09);
+  --tx:#eafaf0;--mut:#8fa89a;--ac:#2ee67a;--ac2:#12b85a;--acd:rgba(46,230,122,.14);
+  --warn:#f5b942;--bad:#ff5d6c;--nav:#08130d;--on:#04210f;
+}
+body.light{
+  --bg:#f1f8f3;--bg2:#ffffff;--card:#ffffff;--cb:rgba(0,0,0,.09);
+  --tx:#10261a;--mut:#5d7568;--ac:#12a150;--ac2:#0d8a42;--acd:rgba(18,161,80,.12);--nav:#ffffff;--on:#ffffff;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Hind Siliguri',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;
+  background-image:radial-gradient(900px 420px at 90% -8%,rgba(46,230,122,.17),transparent 60%),radial-gradient(600px 320px at -10% 25%,rgba(18,184,90,.10),transparent 60%);
+  background-attachment:fixed;-webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;cursor:pointer}
+small{color:var(--mut)}
+#app{max-width:520px;margin:0 auto;padding:14px 14px 100px}
+.hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.hd h1{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-size:26px;letter-spacing:.5px;margin:0;color:var(--ac)}
+.hd p{margin:0;color:var(--mut);font-size:13px}
+.hr{display:flex;gap:10px;align-items:center}
+.ib{position:relative;width:42px;height:42px;border-radius:50%;border:1px solid var(--cb);background:var(--card);color:var(--tx);font-size:18px}
+.ib i{position:absolute;top:8px;right:9px;width:9px;height:9px;border-radius:50%;background:var(--bad);display:none}
+.ib i.on{display:block}
+.av{width:42px;height:42px;border-radius:50%;background:var(--acd);border:1px solid var(--cb);display:grid;place-items:center;font-weight:700;color:var(--ac);overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.greet{font-size:14px;color:var(--mut);margin:2px 0 10px}
+.view{display:none}.view.on{display:block}
+.card{background:var(--card);border:1px solid var(--cb);border-radius:18px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sec{font-size:17px;margin:20px 0 10px;font-weight:700}
+.searchbox{display:flex;gap:8px;align-items:center;padding:13px 14px;border-radius:14px;background:var(--card);border:1px solid var(--cb);color:var(--mut);margin-bottom:14px}
+.banners{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-bottom:14px}
+.banners::-webkit-scrollbar{display:none}
+.bn{flex:0 0 100%;scroll-snap-align:start;border-radius:18px;padding:18px;min-height:110px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;
+  background:linear-gradient(135deg,#0f3d24,#0a2a19);background-size:cover;background-position:center;border:1px solid var(--cb);color:#fff}
+.bn b{font-size:18px}.bn span{font-size:13px;opacity:.85}
+.nbar{display:flex;align-items:center;gap:12px;padding:14px;margin-bottom:14px;background:linear-gradient(135deg,rgba(46,230,122,.16),rgba(18,184,90,.05))}
+.nbar .em{font-size:28px}.nbar b{display:block}.nbar small{display:block;margin-top:2px}
+.nbar .grow{flex:1;min-width:0}
+.pill{border:0;border-radius:20px;padding:8px 14px;background:var(--acd);color:var(--ac);font-weight:600}
+.quote{padding:16px 18px;margin-bottom:6px;border-left:3px solid var(--ac);border-radius:6px 18px 18px 6px}
+.quote p{margin:0 0 6px;font-size:16px;line-height:1.55;font-weight:500;transition:opacity .4s}
+.quote small{transition:opacity .4s}
+.quote.fade p,.quote.fade small{opacity:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{padding:13px;display:flex;gap:10px;align-items:center;cursor:pointer}
+.tile b{display:block;font-size:15px}.tile small{font-size:12px}
+.ti{width:42px;height:42px;flex:0 0 42px;border-radius:12px;background:var(--acd);display:grid;place-items:center;font-size:22px}
+.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.hscroll::-webkit-scrollbar{display:none}
+.fc{flex:0 0 170px;padding:13px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
+.fc-t{font-weight:700;font-size:15px;line-height:1.3;min-height:40px}
+.fc-m{font-size:12px;color:var(--mut)}
+.fc-r{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.pc{padding:13px;margin-bottom:10px;cursor:pointer}
+.pc-top{display:flex;gap:11px;align-items:center;margin-bottom:10px}
+.pc-main{flex:1;min-width:0}
+.pc-name{font-weight:700;font-size:15.5px;display:flex;align-items:center;gap:7px}
+.sn{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:7px;background:var(--acd);color:var(--ac);font-size:12px;font-weight:700}
+.pc-meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--mut);margin-top:3px}
+.st.ok{color:var(--ac)}.st.wait{color:var(--warn)}.st.off{color:var(--bad)}
+.fav{border:0;background:transparent;font-size:24px;color:var(--mut);padding:4px}
+.fav.on{color:var(--warn)}
+.bdg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.bdg span{font-size:11.5px;padding:3px 9px;border-radius:20px;background:var(--acd);color:var(--ac)}
+.btn{display:block;width:100%;border:0;border-radius:13px;padding:12px;font-size:15px;font-weight:700;color:var(--on);background:linear-gradient(135deg,var(--ac),var(--ac2))}
+.btn.sm{padding:9px;font-size:13px;border-radius:11px}
+.btn.big{margin-bottom:12px}
+.btn.ghost{background:var(--card);color:var(--tx);border:1px solid var(--cb)}
+.btn.bad{background:var(--bad);color:#fff}
+.btn:disabled{opacity:.45}
+.row{display:flex;gap:10px;margin-top:14px}
+.back{display:inline-block;color:var(--ac);font-weight:600;margin:4px 0 10px;cursor:pointer}
+.chead{display:flex;gap:12px;align-items:center;padding:14px;margin-bottom:12px}
+.chead b{font-size:18px;display:block}
+.sbar input{margin:0 0 10px}
+.chips{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none}
+.chip{border:1px solid var(--cb);background:var(--card);color:var(--tx);border-radius:20px;padding:7px 14px;white-space:nowrap;font-size:13.5px}
+.chip.on{background:var(--ac);color:var(--on);border-color:var(--ac);font-weight:700}
+.nt{padding:14px;margin-bottom:10px;border-left:3px solid var(--ac)}
+.nt.warning{border-left-color:var(--warn)}.nt.success{border-left-color:#4ade80}
+.nt p{margin:6px 0 8px;line-height:1.55;white-space:pre-wrap}
+.empty{text-align:center;color:var(--mut);padding:26px 10px;line-height:1.6}
+.list{padding:4px 14px;margin-bottom:10px}
+.li{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--cb);cursor:pointer}
+.li:last-child{border-bottom:0}
+.li .ic{font-size:20px;width:30px;text-align:center}
+.li .tt{flex:1;font-weight:600}
+details{border-bottom:1px solid var(--cb);padding:12px 0}
+details:last-child{border-bottom:0}
+summary{font-weight:600;cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+details p{margin:8px 0 0;color:var(--mut);line-height:1.6;white-space:pre-wrap}
+.sk{height:76px;border-radius:16px;margin-bottom:10px;background:linear-gradient(90deg,var(--card),rgba(255,255,255,.1),var(--card));background-size:200% 100%;animation:sh 1.3s infinite}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--nav);border-top:1px solid var(--cb);padding-bottom:env(safe-area-inset-bottom)}
+.navi{max-width:520px;margin:0 auto;display:flex}
+.navi button{flex:1;border:0;background:transparent;color:var(--mut);padding:9px 0 8px;font-size:11.5px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.navi button span{font-size:21px;line-height:1}
+.navi button.on{color:var(--ac);font-weight:700}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:flex-end;justify-content:center;z-index:50}
+.ov.on{display:flex}
+#fsheet{z-index:60}#pop{z-index:70;align-items:center;padding:20px}#cfm{z-index:80;align-items:center;padding:20px}
+.sh{width:100%;max-width:520px;max-height:90vh;overflow:auto;background:var(--bg2);border:1px solid var(--cb);border-radius:24px 24px 0 0;padding:20px 18px 26px;animation:up .22s ease-out}
+.pp{border-radius:22px;text-align:center}
+.pp p{white-space:pre-wrap;line-height:1.6;color:var(--tx)}
+.big{font-size:40px;margin-bottom:6px}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sh h3{margin:0 0 4px;font-size:19px}
+.sh .meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--mut);font-size:13px;margin:6px 0 12px}
+.sh .blk{margin-top:14px}.sh .blk b{display:block;margin-bottom:4px}
+.sh .blk div{color:var(--mut);line-height:1.65;white-space:pre-wrap}
+label{display:block;font-size:13px;color:var(--mut);margin-top:12px}
+input,textarea,select{width:100%;background:var(--card);border:1px solid var(--cb);color:var(--tx);border-radius:12px;padding:11px 12px;font:inherit;font-size:16px;margin-top:5px;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--ac)}
+select option{background:var(--bg2);color:var(--tx)}
+label.chk{display:flex;align-items:center;gap:10px;color:var(--tx);font-size:15px}
+label.chk input{width:20px;height:20px;margin:0;accent-color:var(--ac)}
+#admin{position:fixed;inset:0;background:var(--bg);z-index:40;overflow:auto;display:none}
+#admin.on{display:block}
+.ain{max-width:520px;margin:0 auto;padding:14px 14px 60px}
+.ahd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ahd h2{flex:1;margin:0;font-size:20px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{padding:12px 8px;text-align:center}
+.stat b{display:block;font-size:22px;font-family:'Space Grotesk',sans-serif;color:var(--ac)}
+.stat small{font-size:11.5px}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qa button{border:1px solid var(--cb);background:var(--card);color:var(--tx);border-radius:14px;padding:13px;font-weight:600;font-size:14px}
+.menu .mi{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--cb);cursor:pointer}
+.menu .mi:last-child{border-bottom:0}
+.menu .mi .ic{font-size:22px;width:32px;text-align:center}
+.menu .mi div{flex:1}.menu .mi b{display:block}.menu .mi small{font-size:12px}
+.arow{display:flex;gap:10px;align-items:center;padding:12px 14px;margin-bottom:8px}
+.ainfo{flex:1;min-width:0}.ainfo b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ainfo small{font-size:12px}
+.mini{border:1px solid var(--cb);background:var(--card);color:var(--tx);border-radius:10px;width:38px;height:38px;font-size:16px}
+.mini.bad{color:var(--bad)}
+.top{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--cb);font-size:14px}
+.top:last-child{border-bottom:0}
+#maint{position:fixed;inset:0;z-index:45;background:var(--bg);display:none;align-items:center;justify-content:center;text-align:center;padding:30px}
+#maint.on{display:flex}
+#maint p{color:var(--mut);line-height:1.6;max-width:320px}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--ac);color:var(--on);padding:10px 18px;border-radius:24px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:90%;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="hd">
+    <div><h1 id="appName">RNG DEALS</h1><p id="tagline">Tasks • Projects • Rewards</p></div>
+    <div class="hr">
+      <button class="ib" data-act="tab" data-tab="notices" aria-label="Notices">🔔<i id="badge"></i></button>
+      <div id="av" class="av"></div>
+    </div>
+  </div>
+  <section id="home" class="view on"></section>
+  <section id="cats" class="view"></section>
+  <section id="search" class="view">
+    <div class="sbar"><input id="sq" placeholder="প্রজেক্টের নাম লিখুন…" autocomplete="off"></div>
+    <div class="chips" id="chips"></div>
+    <div id="sres"></div>
+  </section>
+  <section id="notices" class="view"></section>
+  <section id="more" class="view"></section>
+</div>
+
+<nav><div class="navi">
+  <button data-act="tab" data-tab="home" class="on"><span>🏠</span>হোম</button>
+  <button data-act="tab" data-tab="cats"><span>📂</span>ক্যাটাগরি</button>
+  <button data-act="tab" data-tab="search"><span>🔍</span>সার্চ</button>
+  <button data-act="tab" data-tab="notices"><span>📢</span>নোটিশ</button>
+  <button data-act="tab" data-tab="more"><span>👤</span>আরও</button>
+</div></nav>
+
+<div id="sheet" class="ov"><div class="sh" id="shb"></div></div>
+<div id="fsheet" class="ov"><div class="sh" id="fsb"></div></div>
+<div id="pop" class="ov"><div class="sh pp" id="ppb"></div></div>
+<div id="cfm" class="ov"><div class="sh pp" id="cfb"></div></div>
+<div id="admin"><div class="ain" id="ab"></div></div>
+<div id="maint"><div><div class="big">🛠️</div><h2>মেইনটেনেন্স চলছে</h2><p id="mmsg"></p><button class="chip" data-act="adminBtn">Admin</button></div></div>
+<div id="toast"></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getFirestore,collection,doc,onSnapshot,addDoc,setDoc,deleteDoc,updateDoc,increment,serverTimestamp,writeBatch} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* ============ FIREBASE ============ */
+const firebaseConfig={
+  apiKey:"AIzaSyAEc2d837GKDjBr7e5sW_gzWw-goEYCq-I",
+  authDomain:"deals-46699.firebaseapp.com",
+  projectId:"deals-46699",
+  storageBucket:"deals-46699.firebasestorage.app",
+  messagingSenderId:"1046555817607",
+  appId:"1:1046555817607:web:9975268ed08aa1d6d7ea22"
+};
+const fapp=initializeApp(firebaseConfig);
+const db=getFirestore(fapp);
+const auth=getAuth(fapp);
+
+/* ============ HELPERS ============ */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const tg=window.Telegram?.WebApp;
+try{tg?.ready();tg?.expand()}catch{}
+const tu=tg?.initDataUnsafe?.user;
+const hap=()=>{try{tg?.HapticFeedback?.impactOccurred('light')}catch{}};
+const normUrl=u=>{u=(u||'').trim();return u&&!/^https?:\/\//i.test(u)?'https://'+u:u};
+function openLink(u){
+  u=normUrl(u);if(!u)return;
+  try{
+    if(/^https?:\/\/(t\.me|telegram\.me)\//i.test(u)&&tg?.openTelegramLink)tg.openTelegramLink(u);
+    else if(tg?.openLink)tg.openLink(u);
+    else window.open(u,'_blank');
+  }catch{window.open(u,'_blank')}
+}
+let toastT;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2600)}
+function errToast(e){
+  console.error(e);
+  toast(e?.code==='permission-denied'?'অনুমতি নেই। অ্যাডমিন একাউন্টে লগইন আছে কিনা এবং Firestore Rules ঠিক আছে কিনা দেখুন।':'সমস্যা হয়েছে: '+(e?.message||e));
+}
+const empty=m=>`<div class="empty">${m}</div>`;
+const fmtDate=t=>t?.seconds?new Date(t.seconds*1000).toLocaleDateString('bn-BD',{day:'numeric',month:'short',year:'numeric'}):'';
+const byOrder=(a,b)=>((a.order??999)-(b.order??999))||String(a.name||a.title||a.label||'').localeCompare(String(b.name||b.title||b.label||''));
+const byNew=(a,b)=>(b.createdAt?.seconds??9e15)-(a.createdAt?.seconds??9e15);
+
+/* ============ STATE ============ */
+const S={categories:[],projects:[],notices:[],banners:[],quotes:[],faqs:[],links:[],settings:{},loaded:{},user:null,
+  tab:'home',cat:null,q:'',filter:'all',
+  favs:new Set(ls.get('rng_favs',[])),seen:new Set(ls.get('rng_seen',[])),popSeen:new Set(ls.get('rng_pop',[]))};
+const A={open:false,screen:'menu'};
+let F={col:null,id:null};
+let qi=0,bnT=null,qT=null;
+
+const STATUS={active:{t:'চালু',cls:'ok'},soon:{t:'শীঘ্রই আসছে',cls:'wait'},closed:{t:'বন্ধ',cls:'off'},hidden:{t:'লুকানো',cls:'off'}};
+const statusInfo=s=>STATUS[s]||STATUS.active;
+const catOf=id=>S.categories.find(c=>c.id===id);
+const activeCats=()=>S.categories.filter(c=>c.active!==false);
+const pubProjects=()=>S.projects.filter(p=>p.status!=='hidden'&&catOf(p.categoryId)?.active!==false);
+const activeNotices=()=>S.notices.filter(n=>n.active!==false);
+const nkey=n=>n.id+':'+(n.updatedAt?.seconds||n.createdAt?.seconds||0);
+
+/* ============ THEME ============ */
+function applyTheme(){
+  const light=ls.get('rng_theme','dark')==='light';
+  document.body.classList.toggle('light',light);
+  try{tg?.setHeaderColor?.(light?'#f1f8f3':'#06100b');tg?.setBackgroundColor?.(light?'#f1f8f3':'#06100b')}catch{}
+}
+applyTheme();
+
+/* ============ LIVE DATA ============ */
+['categories','projects','notices','banners','quotes','faqs','links'].forEach(c=>{
+  onSnapshot(collection(db,c),snap=>{
+    S[c]=snap.docs.map(d=>({id:d.id,...d.data()}));
+    S[c].sort(c==='notices'?byNew:byOrder);
+    S.loaded[c]=true;onData();
+  },err=>{console.error(c,err);S.loaded[c]=true;onData();toast('ডাটা লোড করা যায়নি, ইন্টারনেট বা Rules দেখুন')});
+});
+onSnapshot(doc(db,'settings','app'),s=>{S.settings=s.exists()?s.data():{};S.loaded.settings=true;onData()},()=>{S.loaded.settings=true;onData()});
+onAuthStateChanged(auth,u=>{S.user=u;if(!u&&A.open)closeAdmin();onData()});
+
+let raf;
+function onData(){cancelAnimationFrame(raf);raf=requestAnimationFrame(renderAll)}
+function renderAll(){
+  branding();RENDER[S.tab]();badge();
+  if(A.open)renderAdmin();
+  const m=S.settings.maintenance&&!S.user;
+  $('#maint').classList.toggle('on',!!m);
+  if(m)$('#mmsg').textContent=S.settings.maintenanceMsg||'অ্যাপের কাজ চলছে। কিছুক্ষণ পর আবার চেষ্টা করুন।';
+  checkPopup();
+}
+function branding(){
+  const n=S.settings.appName||'RNG DEALS';
+  $('#appName').textContent=n;$('#tagline').textContent=S.settings.tagline||'Tasks • Projects • Rewards';document.title=n;
+  const av=$('#av');
+  av.innerHTML=tu?.photo_url?`<img src="${esc(tu.photo_url)}" alt="">`:esc((tu?.first_name||'R').slice(0,1).toUpperCase());
+}
+function badge(){$('#badge').classList.toggle('on',activeNotices().some(n=>!S.seen.has(nkey(n))))}
+
+/* ============ NAVIGATION ============ */
+const RENDER={home:renderHome,cats:renderCats,search:renderSearch,notices:renderNotices,more:renderMore};
+function go(tab){
+  S.tab=tab;
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===tab));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  if(tab==='notices'){activeNotices().forEach(n=>S.seen.add(nkey(n)));ls.set('rng_seen',[...S.seen]);badge()}
+  RENDER[tab]();window.scrollTo(0,0);updateBack();
+}
+const isOn=id=>$('#'+id).classList.contains('on');
+function updateBack(){
+  if(!tg?.BackButton)return;
+  const need=isOn('sheet')||isOn('fsheet')||A.open||S.cat||S.tab!=='home';
+  try{need?tg.BackButton.show():tg.BackButton.hide()}catch{}
+}
+function goBack(){
+  if(isOn('cfm'))return;
+  if(isOn('fsheet'))closeForm();
+  else if(isOn('sheet'))closeSheet();
+  else if(A.open){if(A.screen!=='menu'){A.screen='menu';renderAdmin()}else closeAdmin()}
+  else if(S.cat){S.cat=null;renderCats();updateBack()}
+  else if(S.tab!=='home')go('home');
+}
+try{tg?.BackButton?.onClick(goBack)}catch{}
+function openSheet(html){$('#shb').innerHTML=html;$('#sheet').classList.add('on');updateBack()}
+function closeSheet(){$('#sheet').classList.remove('on');updateBack()}
+
+/* ============ USER VIEWS ============ */
+function catTile(c){
+  const n=pubProjects().filter(p=>p.categoryId===c.id&&p.status==='active').length;
+  return `<div class="tile card" data-act="cat" data-id="${c.id}"><div class="ti">${esc(c.icon||'📁')}</div><div><b>${esc(c.name)}</b><small>${n} টি চালু প্রজেক্ট</small></div></div>`;
+}
+function badgeHtml(p){
+  const b=[];
+  if(p.badge==='new')b.push('🆕 নতুন');if(p.badge==='hot')b.push('🔥 হট');
+  if(p.difficulty)b.push('⚙️ '+esc(p.difficulty));
+  return b.length?`<div class="bdg">${b.map(x=>`<span>${x}</span>`).join('')}</div>`:'';
+}
+function pcard(p,i){
+  const c=catOf(p.categoryId),st=statusInfo(p.status),fav=S.favs.has(p.id);
+  const dis=p.status==='closed'||p.status==='soon';
+  return `<div class="pc card" data-act="detail" data-id="${p.id}">
+    <div class="pc-top"><div class="ti">${esc(c?.icon||'📌')}</div>
+      <div class="pc-main"><div class="pc-name">${i!=null?`<span class="sn">${i+1}</span>`:''}${esc(p.name)}</div>
+      <div class="pc-meta"><span>${esc(c?.name||'')}</span>${p.reward?`<span>💰 ${esc(p.reward)}</span>`:''}<span class="st ${st.cls}">● ${st.t}</span></div></div>
+      <button class="fav ${fav?'on':''}" data-act="fav" data-id="${p.id}" aria-label="Favorite">${fav?'★':'☆'}</button></div>
+    ${badgeHtml(p)}
+    <button class="btn" data-act="open" data-id="${p.id}" ${dis?'disabled':''}>${p.status==='soon'?'⏳ শীঘ্রই আসছে':p.status==='closed'?'🔒 বন্ধ আছে':'🚀 Open Project'}</button></div>`;
+}
+function fcard(p){
+  const c=catOf(p.categoryId),st=statusInfo(p.status);
+  return `<div class="fc card" data-act="detail" data-id="${p.id}"><div class="fc-t">${esc(p.name)}</div><div class="fc-m">${esc(c?.icon||'')} ${esc(c?.name||'')}</div>
+    <div class="fc-r">${p.reward?`<span>💰 ${esc(p.reward)}</span>`:'<span></span>'}<span class="st ${st.cls}">● ${st.t}</span></div>
+    <button class="btn sm" data-act="open" data-id="${p.id}" ${p.status==='soon'?'disabled':''}>🚀 Open Project</button></div>`;
+}
+function renderHome(){
+  const el=$('#home');
+  if(!S.loaded.categories||!S.loaded.projects){el.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';return}
+  const cats=activeCats(),feat=pubProjects().filter(p=>p.featured&&p.status!=='closed');
+  const n=activeNotices()[0],bs=S.banners.filter(b=>b.active!==false),qs=S.quotes.filter(q=>q.active!==false);
+  if(qi>=qs.length)qi=0;
+  el.innerHTML=`
+    ${tu?.first_name?`<div class="greet">হ্যালো, ${esc(tu.first_name)} 👋</div>`:''}
+    <div class="searchbox" data-act="goSearch">🔍 <span>প্রজেক্ট খুঁজুন…</span></div>
+    ${bs.length?`<div class="banners" id="bn">${bs.map(b=>`<div class="bn" data-act="banner" data-id="${b.id}" ${b.image?`style="background-image:linear-gradient(90deg,rgba(0,0,0,.65),rgba(0,0,0,.1)),url('${esc(normUrl(b.image))}')"`:''}><b>${esc(b.title)}</b><span>${esc(b.text)}</span></div>`).join('')}</div>`:''}
+    ${n?`<div class="nbar card"><div class="em">📢</div><div class="grow"><b>${esc(n.title)}</b><small>${esc((n.message||'').slice(0,70))}${(n.message||'').length>70?'…':''}</small></div><button class="pill" data-act="viewNotices">দেখুন</button></div>`:''}
+    ${qs.length?`<div class="quote card" id="quote"><p id="qt">${esc(qs[qi].text)}</p><small id="qa">${qs[qi].author?'— '+esc(qs[qi].author):''}</small></div>`:''}
+    <h3 class="sec">ক্যাটাগরি</h3>
+    <div class="grid">${cats.map(catTile).join('')||''}</div>
+    ${cats.length?'':empty('এখনো কোনো ক্যাটাগরি যোগ করা হয়নি।')}
+    ${feat.length?`<h3 class="sec">🔥 ফিচার্ড প্রজেক্ট</h3><div class="hscroll">${feat.map(fcard).join('')}</div>`:''}`;
+  startBanner();startQuote(qs);
+}
+function startBanner(){
+  clearInterval(bnT);const b=$('#bn');if(!b||b.children.length<2)return;
+  let i=0;bnT=setInterval(()=>{if(S.tab!=='home')return;i=(i+1)%b.children.length;b.scrollTo({left:b.clientWidth*i,behavior:'smooth'})},4500);
+}
+function startQuote(qs){
+  clearInterval(qT);if(qs.length<2)return;
+  qT=setInterval(()=>{
+    const box=$('#quote');if(!box||S.tab!=='home')return;
+    box.classList.add('fade');
+    setTimeout(()=>{qi=(qi+1)%qs.length;const t=$('#qt'),a=$('#qa');if(t)t.textContent=qs[qi].text;if(a)a.textContent=qs[qi].author?'— '+qs[qi].author:'';box.classList.remove('fade')},420);
+  },9000);
+}
+function renderCats(){
+  const el=$('#cats');
+  if(S.cat){
+    const c=catOf(S.cat);
+    if(c){
+      const ps=pubProjects().filter(p=>p.categoryId===c.id);
+      el.innerHTML=`<div class="back" data-act="catBack">← সব ক্যাটাগরি</div>
+        <div class="chead card"><div class="ti">${esc(c.icon||'📁')}</div><div><b>${esc(c.name)}</b><small>${ps.filter(p=>p.status==='active').length} টি চালু প্রজেক্ট</small></div></div>
+        ${ps.map((p,i)=>pcard(p,i)).join('')||empty('এই ক্যাটাগরিতে এখনো প্রজেক্ট নেই।')}`;
+      return;
+    }
+    S.cat=null;
+  }
+  el.innerHTML=`<h3 class="sec" style="margin-top:6px">সব ক্যাটাগরি</h3><div class="grid">${activeCats().map(catTile).join('')}</div>${activeCats().length?'':empty('এখনো কোনো ক্যাটাগরি যোগ করা হয়নি।')}`;
+}
+function renderSearch(){
+  const chips=[['all','সব'],['active','চালু'],['soon','শীঘ্রই'],['fav','⭐ ফেভারিট']];
+  $('#chips').innerHTML=chips.map(([k,t])=>`<button class="chip ${S.filter===k?'on':''}" data-act="filter" data-f="${k}">${t}</button>`).join('');
+  const q=S.q.trim().toLowerCase();
+  let ps=pubProjects();
+  if(S.filter==='active')ps=ps.filter(p=>p.status==='active');
+  if(S.filter==='soon')ps=ps.filter(p=>p.status==='soon');
+  if(S.filter==='fav')ps=ps.filter(p=>S.favs.has(p.id));
+  if(q)ps=ps.filter(p=>[p.name,p.description,catOf(p.categoryId)?.name].join(' ').toLowerCase().includes(q));
+  $('#sres').innerHTML=ps.map(p=>pcard(p)).join('')||empty('কিছু পাওয়া যায়নি।');
+}
+function renderNotices(){
+  const ns=activeNotices();
+  $('#notices').innerHTML=`<h3 class="sec" style="margin-top:6px">📢 নোটিশ</h3>`+(ns.map(n=>`<div class="card nt ${esc(n.type||'info')}"><b>${esc(n.title)}</b><p>${esc(n.message)}</p>${n.link?`<button class="btn sm" data-act="link" data-url="${esc(n.link)}">খুলুন</button>`:''}<small>${fmtDate(n.createdAt)}</small></div>`).join('')||empty('এখন কোনো নোটিশ নেই।'));
+}
+function renderMore(){
+  const favs=pubProjects().filter(p=>S.favs.has(p.id));
+  const links=S.links;
+  $('#more').innerHTML=`
+    <h3 class="sec" style="margin-top:6px">⭐ আমার ফেভারিট</h3>
+    ${favs.length?favs.map(p=>pcard(p)).join(''):empty('প্রজেক্ট কার্ডের ☆ চাপলে এখানে সেভ হবে।')}
+    ${links.length?`<h3 class="sec">💬 সাপোর্ট ও লিংক</h3><div class="card list">${links.map(l=>`<div class="li" data-act="link" data-url="${esc(l.url)}"><span class="ic">${esc(l.icon||'🔗')}</span><span class="tt">${esc(l.label)}</span><small>›</small></div>`).join('')}</div>`:''}
+    ${S.faqs.length?`<h3 class="sec">❓ সাধারণ প্রশ্ন</h3><div class="card list">${S.faqs.map(f=>`<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>`:''}
+    <h3 class="sec">⚙️ সেটিংস</h3>
+    <div class="card list">
+      <div class="li" data-act="theme"><span class="ic">${ls.get('rng_theme','dark')==='light'?'🌙':'☀️'}</span><span class="tt">${ls.get('rng_theme','dark')==='light'?'ডার্ক মোড':'লাইট মোড'}</span><small>›</small></div>
+      <div class="li" data-act="adminBtn"><span class="ic">🔐</span><span class="tt">${S.user?'অ্যাডমিন প্যানেল':'অ্যাডমিন লগইন'}</span><small>›</small></div>
+    </div>`;
+}
+
+/* ============ PROJECT ACTIONS ============ */
+function toggleFav(id){
+  S.favs.has(id)?S.favs.delete(id):S.favs.add(id);
+  ls.set('rng_favs',[...S.favs]);hap();RENDER[S.tab]();
+}
+function openProject(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(p.status==='soon')return toast('এই প্রজেক্ট শীঘ্রই আসছে');
+  if(p.status==='closed')return toast('এই প্রজেক্ট এখন বন্ধ');
+  if(!p.postUrl)return toast('লিংক দেওয়া হয়নি');
+  hap();updateDoc(doc(db,'projects',id),{clicks:increment(1)}).catch(()=>{});
+  openLink(p.postUrl);
+}
+function showDetail(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  const c=catOf(p.categoryId),st=statusInfo(p.status);
+  openSheet(`<h3>${esc(c?.icon||'')} ${esc(p.name)}</h3>
+    <div class="meta"><span>${esc(c?.name||'')}</span>${p.reward?`<span>💰 ${esc(p.reward)}</span>`:''}${p.difficulty?`<span>⚙️ ${esc(p.difficulty)}</span>`:''}<span class="st ${st.cls}">● ${st.t}</span></div>
+    ${p.description?`<div class="blk"><b>📝 বিবরণ</b><div>${esc(p.description)}</div></div>`:''}
+    ${p.requirements?`<div class="blk"><b>📋 যা লাগবে</b><div>${esc(p.requirements)}</div></div>`:''}
+    ${p.instructions?`<div class="blk"><b>⚠️ গুরুত্বপূর্ণ নিয়ম</b><div>${esc(p.instructions)}</div></div>`:''}
+    ${!p.description&&!p.requirements&&!p.instructions?`<div class="blk"><div>সব তথ্য, ভিডিও ও লিংক টেলিগ্রাম পোস্টে দেওয়া আছে। Open Project চাপুন।</div></div>`:''}
+    <div class="row" style="flex-direction:column">
+      <button class="btn" data-act="open" data-id="${p.id}" ${p.status!=='active'?'disabled':''}>🚀 Open Project</button>
+      ${p.videoUrl?`<button class="btn ghost" data-act="link" data-url="${esc(p.videoUrl)}">🎬 ভিডিও দেখুন</button>`:''}
+      <button class="btn ghost" data-act="fav" data-id="${p.id}">${S.favs.has(p.id)?'★ ফেভারিট থেকে সরান':'☆ ফেভারিটে রাখুন'}</button>
+    </div>`);
+}
+function checkPopup(){
+  if(!S.loaded.notices||isOn('pop')||A.open||$('#maint').classList.contains('on'))return;
+  const n=activeNotices().find(n=>n.popup&&!S.popSeen.has(nkey(n)));
+  if(!n)return;
+  $('#ppb').innerHTML=`<div class="big">${n.type==='warning'?'⚠️':n.type==='success'?'🎉':'📢'}</div><h3>${esc(n.title)}</h3><p>${esc(n.message)}</p>
+    <div class="row">${n.link?`<button class="btn ghost" data-act="popLink" data-url="${esc(n.link)}">খুলুন</button>`:''}<button class="btn" data-act="popClose" data-key="${esc(nkey(n))}">ঠিক আছে</button></div>`;
+  $('#pop').classList.add('on');
+}
+function ask(msg,yes='হ্যাঁ'){
+  return new Promise(res=>{
+    $('#cfb').innerHTML=`<div class="big">⚠️</div><p>${esc(msg)}</p><div class="row"><button class="btn ghost" id="cn">না</button><button class="btn bad" id="cy">${yes}</button></div>`;
+    $('#cfm').classList.add('on');
+    $('#cn').onclick=()=>{$('#cfm').classList.remove('on');res(false)};
+    $('#cy').onclick=()=>{$('#cfm').classList.remove('on');res(true)};
+  });
+}
+
+/* ============ ADMIN ============ */
+const SCHEMA={
+  projects:{single:'প্রজেক্ট',title:p=>p.name,sub:p=>`${catOf(p.categoryId)?.name||'—'} · ${p.reward||'—'} · ${statusInfo(p.status).t} · 👆 ${p.clicks||0}`,defaults:{status:'active',badge:'none'},fields:[
+    {key:'name',label:'প্রজেক্টের নাম',type:'text',req:1},
+    {key:'categoryId',label:'ক্যাটাগরি',type:'select',req:1,options:()=>S.categories.map(c=>({v:c.id,t:`${c.icon||''} ${c.name}`}))},
+    {key:'postUrl',label:'টেলিগ্রাম পোস্ট লিংক',type:'url',req:1},
+    {key:'reward',label:'রেট / রিওয়ার্ড (যেমন ৳15)',type:'text'},
+    {key:'status',label:'স্ট্যাটাস',type:'select',options:[{v:'active',t:'চালু'},{v:'soon',t:'শীঘ্রই আসছে'},{v:'closed',t:'বন্ধ'},{v:'hidden',t:'লুকানো (ইউজার দেখবে না)'}]},
+    {key:'badge',label:'ব্যাজ',type:'select',options:[{v:'none',t:'কিছু না'},{v:'new',t:'🆕 নতুন'},{v:'hot',t:'🔥 হট'}]},
+    {key:'featured',label:'ফিচার্ড (হোমে দেখাবে)',type:'checkbox'},
+    {key:'difficulty',label:'কঠিনতা (যেমন সহজ)',type:'text'},
+    {key:'videoUrl',label:'ভিডিও লিংক',type:'url'},
+    {key:'description',label:'বিবরণ',type:'textarea'},
+    {key:'requirements',label:'যা লাগবে',type:'textarea'},
+    {key:'instructions',label:'গুরুত্বপূর্ণ নিয়ম',type:'textarea'},
+    {key:'order',label:'ক্রম নম্বর (ছোট আগে)',type:'number'}]},
+  categories:{single:'ক্যাটাগরি',title:c=>`${c.icon||''} ${c.name}`,sub:c=>`${S.projects.filter(p=>p.categoryId===c.id).length} টি প্রজেক্ট · ${c.active===false?'বন্ধ':'চালু'}`,defaults:{active:true,icon:'📁'},fields:[
+    {key:'name',label:'নাম',type:'text',req:1},{key:'icon',label:'আইকন (ইমোজি)',type:'text'},
+    {key:'active',label:'চালু (ইউজারকে দেখাবে)',type:'checkbox'},{key:'order',label:'ক্রম নম্বর',type:'number'}]},
+  notices:{single:'নোটিশ',title:n=>n.title,sub:n=>`${n.active===false?'বন্ধ':'চালু'}${n.popup?' · পপআপ':''} · ${fmtDate(n.createdAt)}`,defaults:{type:'info',active:true,popup:false},fields:[
+    {key:'title',label:'শিরোনাম',type:'text',req:1},{key:'message',label:'বার্তা',type:'textarea',req:1},
+    {key:'type',label:'ধরন',type:'select',options:[{v:'info',t:'📢 সাধারণ'},{v:'success',t:'🎉 সুখবর'},{v:'warning',t:'⚠️ সতর্কতা'}]},
+    {key:'link',label:'লিংক (ঐচ্ছিক)',type:'url'},
+    {key:'popup',label:'পপআপ হিসেবে দেখাও',type:'checkbox'},{key:'active',label:'চালু',type:'checkbox'}]},
+  banners:{single:'ব্যানার',title:b=>b.title,sub:b=>b.active===false?'বন্ধ':'চালু',defaults:{active:true},fields:[
+    {key:'title',label:'শিরোনাম',type:'text',req:1},{key:'text',label:'ছোট লেখা',type:'text'},
+    {key:'image',label:'ছবির লিংক (ঐচ্ছিক)',type:'url'},{key:'link',label:'ক্লিক করলে যে লিংকে যাবে',type:'url'},
+    {key:'active',label:'চালু',type:'checkbox'},{key:'order',label:'ক্রম নম্বর',type:'number'}]},
+  quotes:{single:'উক্তি',title:q=>q.text,sub:q=>`${q.author||'—'} · ${q.active===false?'বন্ধ':'চালু'}`,defaults:{active:true},fields:[
+    {key:'text',label:'উক্তি / ডায়লগ',type:'textarea',req:1},{key:'author',label:'কার উক্তি (ঐচ্ছিক)',type:'text'},
+    {key:'active',label:'চালু',type:'checkbox'},{key:'order',label:'ক্রম নম্বর',type:'number'}]},
+  links:{single:'লিংক',title:l=>`${l.icon||'🔗'} ${l.label}`,sub:l=>l.url,defaults:{icon:'🔗'},fields:[
+    {key:'label',label:'নাম (যেমন অ্যাডমিনের সাথে যোগাযোগ)',type:'text',req:1},{key:'url',label:'লিংক',type:'url',req:1},
+    {key:'icon',label:'আইকন (ইমোজি)',type:'text'},{key:'order',label:'ক্রম নম্বর',type:'number'}]},
+  faqs:{single:'প্রশ্ন',title:f=>f.q,sub:f=>(f.a||'').slice(0,50),defaults:{},fields:[
+    {key:'q',label:'প্রশ্ন',type:'text',req:1},{key:'a',label:'উত্তর',type:'textarea',req:1},{key:'order',label:'ক্রম নম্বর',type:'number'}]},
+  settings:{single:'সেটিংস',defaults:{},fields:[
+    {key:'appName',label:'অ্যাপের নাম',type:'text'},{key:'tagline',label:'ট্যাগলাইন',type:'text'},
+    {key:'maintenance',label:'মেইনটেনেন্স মোড চালু',type:'checkbox'},{key:'maintenanceMsg',label:'মেইনটেনেন্স বার্তা',type:'textarea'}]}
+};
+const MENU=[['projects','📦','প্রজেক্ট ম্যানেজমেন্ট','যোগ, এডিট, ফিচার্ড, স্ট্যাটাস'],['categories','📂','ক্যাটাগরি ম্যানেজমেন্ট','ক্যাটাগরি সাজান'],['notices','📢','নোটিশ ও পপআপ','অ্যাপজুড়ে ঘোষণা'],['banners','🖼️','ব্যানার','হোমের স্লাইডার'],['quotes','💡','মোটিভেশন উক্তি','টাকা নিয়ে অনুপ্রেরণা'],['links','🔗','সাপোর্ট লিংক','অ্যাডমিন/চ্যানেল লিংক'],['faqs','❓','FAQ','সাধারণ প্রশ্ন-উত্তর'],['settings','⚙️','অ্যাপ সেটিংস','নাম, মেইনটেনেন্স'],['tools','🧰','টুলস','ডিফল্ট ডাটা, ব্যাকআপ, লগআউট']];
+const ATITLE={menu:'Admin Dashboard',projects:'প্রজেক্ট',categories:'ক্যাটাগরি',notices:'নোটিশ',banners:'ব্যানার',quotes:'উক্তি',links:'সাপোর্ট লিংক',faqs:'FAQ',settings:'সেটিংস',tools:'টুলস'};
+
+function openAdmin(){A.open=true;A.screen='menu';$('#admin').classList.add('on');renderAdmin();updateBack()}
+function closeAdmin(){A.open=false;$('#admin').classList.remove('on');updateBack();onData()}
+function loginSheet(){
+  openSheet(`<h3>🔐 অ্যাডমিন লগইন</h3><small>শুধু অ্যাডমিনের জন্য</small>
+    <label>ইমেইল<input id="le" type="email" autocomplete="username"></label>
+    <label>পাসওয়ার্ড<input id="lp" type="password" autocomplete="current-password"></label>
+    <div class="row"><button class="btn" id="lgo" data-act="login">লগইন করুন</button></div>`);
+}
+async function doLogin(){
+  const em=$('#le').value.trim(),pw=$('#lp').value;
+  if(!em||!pw)return toast('ইমেইল ও পাসওয়ার্ড দিন');
+  const b=$('#lgo');b.disabled=true;
+  try{await signInWithEmailAndPassword(auth,em,pw);closeSheet();openAdmin()}
+  catch(e){b.disabled=false;toast('লগইন হয়নি: ইমেইল বা পাসওয়ার্ড ভুল')}
+}
+function renderAdmin(){
+  const s=A.screen;let body='';
+  if(s==='menu')body=adminDash();
+  else if(s==='tools')body=adminTools();
+  else if(s==='settings')body=adminSettings();
+  else body=adminList(s);
+  $('#ab').innerHTML=`<div class="ahd"><button class="mini" data-act="aBack">←</button><h2>${s==='menu'?'👑 '+esc(S.settings.appName||'RNG DEALS')+' · Admin':ATITLE[s]}</h2></div>${body}`;
+}
+function adminDash(){
+  const act=S.projects.filter(p=>p.status==='active').length,clicks=S.projects.reduce((n,p)=>n+(p.clicks||0),0);
+  const top=[...S.projects].sort((a,b)=>(b.clicks||0)-(a.clicks||0)).slice(0,5).filter(p=>p.clicks);
+  const st=[[act,'চালু প্রজেক্ট'],[S.categories.length,'ক্যাটাগরি'],[activeNotices().length,'নোটিশ'],[S.projects.length,'মোট প্রজেক্ট'],[clicks,'মোট ক্লিক'],[S.favs.size,'আমার ফেভারিট']];
+  return `<div class="stats">${st.map(([n,t])=>`<div class="stat card"><b>${n}</b><small>${t}</small></div>`).join('')}</div>
+    <h3 class="sec">দ্রুত কাজ</h3>
+    <div class="qa"><button data-act="aAdd" data-col="projects">＋ প্রজেক্ট</button><button data-act="aAdd" data-col="categories">📁 ক্যাটাগরি</button><button data-act="aAdd" data-col="notices">📢 নোটিশ</button><button data-act="aAdd" data-col="quotes">💡 উক্তি</button></div>
+    ${top.length?`<h3 class="sec">🔥 জনপ্রিয় প্রজেক্ট</h3><div class="card" style="padding:4px 14px">${top.map(p=>`<div class="top"><span>${esc(p.name)}</span><b>👆 ${p.clicks}</b></div>`).join('')}</div>`:''}
+    <h3 class="sec">ম্যানেজমেন্ট মেনু</h3>
+    <div class="card menu">${MENU.map(([k,ic,t,d])=>`<div class="mi" data-act="aMenu" data-s="${k}"><span class="ic">${ic}</span><div><b>${t}</b><small>${d}</small></div><small>›</small></div>`).join('')}</div>`;
+}
+function adminList(col){
+  const sc=SCHEMA[col],items=S[col];
+  return `<button class="btn big" data-act="aAdd" data-col="${col}">＋ নতুন ${sc.single} যোগ করুন</button>`+
+    (items.map(it=>`<div class="arow card"><div class="ainfo"><b>${esc(sc.title(it))}</b><small>${esc(sc.sub?sc.sub(it):'')}</small></div>
+      <button class="mini" data-act="aEdit" data-col="${col}" data-id="${it.id}">✏️</button><button class="mini bad" data-act="aDel" data-col="${col}" data-id="${it.id}">🗑</button></div>`).join('')||empty('এখনো কিছু নেই। উপরের বাটনে যোগ করুন, অথবা টুলস থেকে ডিফল্ট ডাটা লোড করুন।'));
+}
+function adminSettings(){
+  const s=S.settings;
+  return `<div class="card" style="padding:14px"><p><b>${esc(s.appName||'RNG DEALS')}</b><br><small>${esc(s.tagline||'')}</small></p><p>মেইনটেনেন্স: <b>${s.maintenance?'🔴 চালু':'🟢 বন্ধ'}</b></p></div>
+    <button class="btn" data-act="aEdit" data-col="settings" style="margin-top:12px">✏️ সেটিংস এডিট করুন</button>`;
+}
+function adminTools(){
+  return `<div class="card" style="padding:14px;margin-bottom:12px"><b>ডিফল্ট ডাটা লোড</b><p><small>খালি কালেকশনে আপনার দেওয়া প্রজেক্ট, ক্যাটাগরি, উক্তি, FAQ ও সাপোর্ট লিংক বসাবে। আগের ডাটা মুছবে না।</small></p><button class="btn" data-act="seed">📥 ডিফল্ট ডাটা লোড করুন</button></div>
+    <div class="card" style="padding:14px;margin-bottom:12px"><b>ব্যাকআপ</b><p><small>সব ডাটা JSON ফাইল হিসেবে ডাউনলোড বা কপি হবে।</small></p><button class="btn ghost" data-act="backup">💾 ব্যাকআপ নিন</button></div>
+    <button class="btn bad" data-act="aLogout">🚪 লগআউট</button>`;
+}
+function nextOrder(col){return (S[col]||[]).reduce((m,x)=>Math.max(m,x.order||0),0)+1}
+function fieldHtml(f,v){
+  const val=v??'';
+  if(f.type==='textarea')return `<label>${f.label}<textarea name="${f.key}" rows="3">${esc(val)}</textarea></label>`;
+  if(f.type==='checkbox')return `<label class="chk"><input type="checkbox" name="${f.key}" ${val?'checked':''}> ${f.label}</label>`;
+  if(f.type==='select'){
+    const o=typeof f.options==='function'?f.options():f.options;
+    return `<label>${f.label}<select name="${f.key}">${o.map(x=>`<option value="${esc(x.v)}" ${String(x.v)===String(val)?'selected':''}>${esc(x.t)}</option>`).join('')}</select></label>`;
+  }
+  if(f.type==='number')return `<label>${f.label}<input name="${f.key}" type="number" inputmode="numeric" value="${esc(val)}"></label>`;
+  return `<label>${f.label}<input name="${f.key}" type="text" ${f.type==='url'?'inputmode="url" autocapitalize="none"':''} value="${esc(val)}"></label>`;
+}
+function openForm(col,id){
+  F={col,id};const sc=SCHEMA[col];
+  const item=col==='settings'?S.settings:(id?S[col].find(x=>x.id===id):{...sc.defaults,order:nextOrder(col)});
+  $('#fsb').innerHTML=`<h3>${id||col==='settings'?'✏️ এডিট':'＋ নতুন'} · ${sc.single}</h3>
+    <form id="fform" onsubmit="return false">${sc.fields.map(f=>fieldHtml(f,item?.[f.key])).join('')}</form>
+    <div class="row"><button class="btn ghost" data-act="fClose">বাতিল</button><button class="btn" id="fsave" data-act="aSave">💾 সেভ করুন</button></div>`;
+  $('#fsheet').classList.add('on');updateBack();
+}
+function closeForm(){$('#fsheet').classList.remove('on');updateBack()}
+async function saveForm(){
+  const sc=SCHEMA[F.col],form=$('#fform'),data={};
+  for(const f of sc.fields){
+    const el=form.elements[f.key];let v;
+    if(f.type==='checkbox')v=el.checked;
+    else if(f.type==='number')v=el.value===''?(F.col==='settings'?null:nextOrder(F.col)):Number(el.value);
+    else v=el.value.trim();
+    if(f.type==='url'&&v)v=normUrl(v);
+    if(f.req&&(v===''||v==null))return toast(f.label+' দিন');
+    data[f.key]=v;
+  }
+  const b=$('#fsave');b.disabled=true;
+  try{
+    if(F.col==='settings')await setDoc(doc(db,'settings','app'),{...data,updatedAt:serverTimestamp()},{merge:true});
+    else if(F.id)await updateDoc(doc(db,F.col,F.id),{...data,updatedAt:serverTimestamp()});
+    else await addDoc(collection(db,F.col),{...data,...(F.col==='projects'?{clicks:0}:{}),createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    closeForm();toast('সেভ হয়েছে ✅');
+  }catch(e){errToast(e)}
+  b.disabled=false;
+}
+async function delItem(col,id){
+  if(!await ask('এটি মুছে ফেলবেন? এটা ফেরানো যাবে না।','হ্যাঁ, মুছুন'))return;
+  try{await deleteDoc(doc(db,col,id));toast('মুছে ফেলা হয়েছে')}catch(e){errToast(e)}
+}
+
+/* ============ DEFAULT DATA ============ */
+const DEF={
+  categories:[['telegram','Telegram','✈️'],['whatsapp','WhatsApp','💬'],['gmail','Gmail','📧'],['instagram','Instagram','📸'],['facebook','Facebook','🔵']],
+  projects:{
+    telegram:[['Accflybot',39],['B Bot',427],['Inbox',53],['Any Bots',28]],
+    whatsapp:[['Inbox',6],['WS Website',8],['WS OTP',429],['WS Bot',9],['WS Task',693],['Taskbridge',744]],
+    gmail:[['NexoraG',417],['Earnmail',18],['Gmail Pay',10],['Xgodo',328],['G F Pro',154],['UXGmail',157],['Income X',396],['Gmail Father',206],['Task G',151],['G Farmer',15]],
+    instagram:[['Easy Income AI',57],['Easy Income X',396],['Taskly',64]],
+    facebook:[['Easy Income AI',57],['Easy Income X',396]]},
+  quotes:[
+    ['ছোট ছোট আয়ই একদিন বড় সাফল্যের ভিত্তি গড়ে।','RNG Deals'],
+    ['আজ কাজ শুরু করো, কাল তোমার ইনকাম কথা বলবে।','RNG Deals'],
+    ['ধৈর্য আর নিয়মিত কাজ, এই দুটোই ইনকামের আসল চাবি।','RNG Deals'],
+    ['যে সময়ের মূল্য বোঝে, সে টাকার মূল্যও বোঝে।','RNG Deals'],
+    ['প্রতিদিন একটু একটু করে এগোও, একদিন অনেক দূর পৌঁছে যাবে।','RNG Deals'],
+    ['আয় করা শেখো, কিন্তু সঞ্চয় করা তার চেয়েও জরুরি।','RNG Deals'],
+    ['Do not save what is left after spending, but spend what is left after saving.','Warren Buffett'],
+    ['An investment in knowledge pays the best interest.','Benjamin Franklin'],
+    ['Beware of little expenses; a small leak will sink a great ship.','Benjamin Franklin'],
+    ['A penny saved is a penny earned.','Benjamin Franklin'],
+    ['Opportunities don\'t happen. You create them.','Chris Grosser'],
+    ['Don\'t watch the clock; do what it does. Keep going.','Sam Levenson']],
+  faqs:[
+    ['কীভাবে কাজ শুরু করব?','পছন্দের ক্যাটাগরিতে ঢুকে প্রজেক্ট বেছে নিন, তারপর Open Project চাপুন। টেলিগ্রাম পোস্টে ভিডিও, লিংক ও সব নিয়ম দেওয়া আছে।'],
+    ['প্রজেক্ট বন্ধ বা শীঘ্রই আসছে দেখালে?','প্রজেক্টটি এখন চালু নেই। নতুন আপডেটের জন্য নোটিশ ট্যাব ও আমাদের চ্যানেল দেখুন।'],
+    ['কোনো সমস্যা হলে কী করব?','আরও ট্যাবের সাপোর্ট লিংক থেকে অ্যাডমিনের সাথে যোগাযোগ করুন।']],
+  links:[['অ্যাডমিনের সাথে যোগাযোগ','https://t.me/rngbadboy','👤'],['RNG Deals চ্যানেল','https://t.me/rngdeals','📢']]
+};
+async function seedDefaults(){
+  const b=writeBatch(db);let n=0;
+  const add=(col,id,data)=>{const r=id?doc(db,col,id):doc(collection(db,col));b.set(r,{...data,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});n++};
+  if(!S.categories.length)DEF.categories.forEach(([id,name,icon],i)=>add('categories',id,{name,icon,order:i+1,active:true}));
+  if(!S.projects.length)Object.entries(DEF.projects).forEach(([cat,list])=>list.forEach(([name,post],i)=>add('projects',`${cat}-${i+1}`,{
+    name,categoryId:cat,postUrl:'https://t.me/rngdeals/'+post,status:'active',badge:'none',featured:i===0,difficulty:'',reward:'',description:'',videoUrl:'',requirements:'',instructions:'',order:i+1,clicks:0})));
+  if(!S.quotes.length)DEF.quotes.forEach(([text,author],i)=>add('quotes',null,{text,author,active:true,order:i+1}));
+  if(!S.faqs.length)DEF.faqs.forEach(([q,a],i)=>add('faqs',null,{q,a,order:i+1}));
+  if(!S.links.length)DEF.links.forEach(([label,url,icon],i)=>add('links',null,{label,url,icon,order:i+1}));
+  if(!S.notices.length)add('notices',null,{title:'স্বাগতম! 🎉',message:'RNG Deals মিনি অ্যাপে আপনাকে স্বাগতম। নতুন প্রজেক্ট যোগ হলে এখানে জানানো হবে।',type:'info',popup:true,active:true});
+  if(!S.settings.appName){b.set(doc(db,'settings','app'),{appName:'RNG DEALS',tagline:'Tasks • Projects • Rewards',maintenance:false,maintenanceMsg:''},{merge:true});n++}
+  if(!n)return toast('সব কালেকশনে আগে থেকেই ডাটা আছে');
+  try{await b.commit();toast('ডিফল্ট ডাটা লোড হয়েছে ✅')}catch(e){errToast(e)}
+}
+async function backup(){
+  const data={};['categories','projects','notices','banners','quotes','faqs','links'].forEach(c=>data[c]=S[c]);data.settings=S.settings;
+  const json=JSON.stringify(data,null,2);
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download='rng-deals-backup.json';document.body.appendChild(a);a.click();a.remove()}catch{}
+  try{await navigator.clipboard.writeText(json);toast('ব্যাকআপ কপি ও ডাউনলোড হয়েছে')}catch{toast('ব্যাকআপ ডাউনলোড শুরু হয়েছে')}
+}
+
+/* ============ EVENTS ============ */
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('[data-act]');
+  if(!t){
+    if(e.target.classList.contains('ov')){
+      if(e.target.id==='fsheet')closeForm();
+      else if(e.target.id==='sheet')closeSheet();
+    }
+    return;
+  }
+  const a=t.dataset.act,id=t.dataset.id,col=t.dataset.col;
+  switch(a){
+    case 'tab':S.cat=null;go(t.dataset.tab);break;
+    case 'goSearch':go('search');setTimeout(()=>$('#sq').focus(),50);break;
+    case 'cat':S.cat=id;go('cats');break;
+    case 'catBack':S.cat=null;renderCats();updateBack();break;
+    case 'open':openProject(id);break;
+    case 'detail':showDetail(id);break;
+    case 'fav':toggleFav(id);if(isOn('sheet'))showDetail(id);break;
+    case 'viewNotices':go('notices');break;
+    case 'banner':{const b=S.banners.find(x=>x.id===id);if(b?.link)openLink(b.link);break}
+    case 'link':openLink(t.dataset.url);break;
+    case 'filter':S.filter=t.dataset.f;renderSearch();break;
+    case 'theme':ls.set('rng_theme',ls.get('rng_theme','dark')==='light'?'dark':'light');applyTheme();renderMore();break;
+    case 'popClose':S.popSeen.add(t.dataset.key);ls.set('rng_pop',[...S.popSeen]);$('#pop').classList.remove('on');setTimeout(checkPopup,300);break;
+    case 'popLink':openLink(t.dataset.url);break;
+    case 'adminBtn':S.user?openAdmin():loginSheet();break;
+    case 'login':doLogin();break;
+    case 'aBack':if(A.screen!=='menu'){A.screen='menu';renderAdmin()}else closeAdmin();break;
+    case 'aMenu':A.screen=t.dataset.s;renderAdmin();break;
+    case 'aAdd':openForm(col);break;
+    case 'aEdit':openForm(col,id);break;
+    case 'aDel':delItem(col,id);break;
+    case 'aSave':saveForm();break;
+    case 'fClose':closeForm();break;
+    case 'seed':seedDefaults();break;
+    case 'backup':backup();break;
+    case 'aLogout':if(await ask('লগআউট করবেন?','লগআউট')){await signOut(auth);toast('লগআউট হয়েছে')}break;
+  }
+});
+let sqT;
+$('#sq').addEventListener('input',e=>{clearTimeout(sqT);sqT=setTimeout(()=>{S.q=e.target.value;renderSearch()},180)});
+
+renderAll();
+</script>
+</body>
+</html>
